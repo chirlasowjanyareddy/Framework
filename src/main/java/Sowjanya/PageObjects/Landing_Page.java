@@ -31,11 +31,12 @@ public class Landing_Page extends AbstractComponent {
         driver.get("https://rahulshettyacademy.com/client");
     }
 
-    public void loginApplication(String email,String password)
+    public Object loginApplication(String email,String password)
     {
         useremail.sendKeys(email);
         passwordele.sendKeys(password);
         submit.click();
-
+        ProductCatalog productCatalog  = new ProductCatalog(driver);
+        return productCatalog;
     }
 }

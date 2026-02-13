@@ -1,5 +1,6 @@
 package Sowjanya;
 
+import Sowjanya.PageObjects.CartCatalog;
 import Sowjanya.PageObjects.Landing_Page;
 import Sowjanya.PageObjects.ProductCatalog;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -19,42 +20,33 @@ import java.util.List;
 public class POM {
     public static void main(String[] args)
     {
+        String product_name ="ZARA COAT 3";
         WebDriverManager.chromedriver().setup();
         WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(5));
         driver.manage().window().maximize();
         Landing_Page landingpage = new Landing_Page(driver);
         landingpage.goTo();
-        landingpage.loginApplication("chirlasowjanyareddy@gmail.com","Sowjanyareddy@123");
+        ProductCatalog productCatalog = (ProductCatalog) landingpage.loginApplication("chirlasowjanyareddy@gmail.com","Sowjanyareddy@123");
 
-        ProductCatalog productCatalog = new ProductCatalog(driver);
+
         List<WebElement> products = productCatalog.getProductList();
+        productCatalog.addProductToCart(product_name);
+        CartCatalog CartCatalog = (CartCatalog) productCatalog.ClicktheCart();
+        List<WebElement> cartprods = CartCatalog.getTheCartProductsList();
 
-
-
-        String product_name ="ZARA COAT 3";
-
-        WebElement prod = products.stream().filter(product
-                ->product.findElement(By.cssSelector("b")).getText().equals(product_name)).findFirst().orElse(null);
-        prod.findElement(By.cssSelector(".card-body button:last-of-type")).click();
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("toast-container")));
-//        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".ng-animating")));
-        wait.until(ExpectedConditions.invisibilityOf(driver.findElement(By.cssSelector(".ng-animating"))));
-
-        driver.findElement(By.cssSelector("[routerlink*='/dashboard/cart']")).click();
-        List<WebElement> cartprods = driver.findElements(By.cssSelector(".cartSection h3"));
-        Boolean match = cartprods.stream().anyMatch(cartprod->cartprod.getText().equalsIgnoreCase(product_name));
+        Boolean match = CartCatalog.CheckWeatherProductisAddedOrNot(product_name);
         Assert.assertTrue(match);
-        driver.findElement(By.cssSelector(".subtotal button")).click();
 
-        Actions a = new Actions(driver);
-        a.sendKeys(driver.findElement(By.cssSelector("[placeholder='Select Country']")),"India").build().perform();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".ta-results")));
-        driver.findElement(By.cssSelector(".ta-item:nth-last-of-type(2)")).click();
-        driver.findElement(By.cssSelector(".action__submit")).click();
-        String conform_msg = driver.findElement(By.cssSelector(".hero-primary")).getText();
+
+        CartCatalog.checkout();
+
+        productCatalog.SelectCountry("India");
+        productCatalog.placeorder();
+
+
+        String conform_msg = productCatalog.CheckOrderPlacedOrNot();
         Assert.assertTrue(conform_msg.equalsIgnoreCase("Thankyou for the order."));
         driver.close();
 
