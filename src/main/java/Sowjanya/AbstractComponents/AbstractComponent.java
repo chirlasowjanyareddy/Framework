@@ -1,6 +1,7 @@
 package Sowjanya.AbstractComponents;
 
 import Sowjanya.PageObjects.CartCatalog;
+import Sowjanya.PageObjects.Orderpage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -22,10 +23,19 @@ public class AbstractComponent {
     @FindBy(css="[routerlink*='/dashboard/cart']")
     WebElement cart;
 
+    @FindBy(css="[routerlink='/dashboard/myorders']")
+    WebElement Orders;
+
     public void WaitForElementToAppear(By FindBy)
     {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.visibilityOfElementLocated(FindBy));
+    }
+
+    public void WaitForWebElementToAppear(WebElement FindBy)
+    {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.visibilityOf(FindBy));
     }
     public void WaitForElemnetToDisapper(WebElement ele)
     {
@@ -37,8 +47,13 @@ public class AbstractComponent {
         cart.click();
         CartCatalog cartCatalog = new CartCatalog(driver);
         return  cartCatalog;
+    }
 
-
+    public Orderpage GoToOrders()
+    {
+        Orders.click();
+        Orderpage orderpage = new Orderpage(driver);
+        return orderpage;
     }
 
 }
