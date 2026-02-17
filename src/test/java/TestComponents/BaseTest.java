@@ -1,7 +1,12 @@
 package TestComponents;
 
 import Sowjanya.PageObjects.Landing_Page;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -10,10 +15,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 public class BaseTest {
@@ -48,4 +56,27 @@ public class BaseTest {
     {
         driver.close();
     }
+    public List<HashMap<String, String>> getJsonDataToMap(String FilePath) throws IOException {
+        // read json to string
+        String JsonContent = FileUtils.readFileToString(new File(FilePath));
+        // string to haskmap
+        ObjectMapper mapper = new ObjectMapper();
+
+        List<HashMap<String,String>> data = mapper.readValue(JsonContent, new TypeReference<List<HashMap<String, String>>>() {});
+        return data;
+    }
+
+
+
+    public File getScreenShot(String TestCaseName,WebDriver driver) throws IOException {
+        TakesScreenshot ts =  (TakesScreenshot)driver;
+        File Source = ts.getScreenshotAs(OutputType.FILE);
+        // destination path
+        File file = new File(System.getProperty("user.dir") + "//reports//"
+                + TestCaseName+".png");
+        FileUtils.copyFile(Source,file );
+        return file;
+    }
+
+
 }

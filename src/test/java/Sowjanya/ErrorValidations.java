@@ -3,6 +3,9 @@ package Sowjanya;
 import Sowjanya.PageObjects.CartCatalog;
 import Sowjanya.PageObjects.ProductCatalog;
 import TestComponents.BaseTest;
+import TestComponents.Retry;
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -12,11 +15,10 @@ import java.util.List;
 
 public class ErrorValidations extends BaseTest {
 
-    @Test
+    @Test(groups = {"ErrorHandling"},retryAnalyzer = Retry.class)
     public void LoginErrorValidation() throws IOException {
-        String product_name = "ZARA COAT 3";
         landingpage.loginApplication("chirlasownyareddy@gmail.com", "Sowjanyareddy@123");
-        Assert.assertEquals(landingpage.getErrorMsg(), "Incorrect email or password.");
+        Assert.assertEquals(landingpage.getErrorMsg(), "Incorrect email password.");
 
     }
     @Test

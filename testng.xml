@@ -1,6 +1,8 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite parallel="tests" name="Automation Suite">
-
+<listeners>
+    <listener class-name="TestComponents.Listeners"></listener>
+</listeners>
     <test name="Submit Order  Tests">
         <classes>
             <class name="Sowjanya.SubmitOrder"/>
